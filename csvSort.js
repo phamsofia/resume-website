@@ -19,28 +19,54 @@
 // AGGREGATE: Print the number of each conversion type
 
 require('dotenv').config()
+const fs = require('fs')
 
-const dataSource = String(process.env.DATASOURCE)
+const dataSource = process.env.DATASOURCE
+const method = process.env.METHOD
 
-const displayData = (path) => {
-    const fs = require('fs')
+const displayData = (data) => {
+    for (i in data) {
+        console.log('===' + (parseInt(i)+1).toString() + '===\n' 
+        + 'Timestamp: ' + (data[i].timestamp).toString() + '\n'
+        + 'IP Address: ' + (data[i].ipAddress).toString() + '\n'
+        + 'Conversion: ' + (data[i].conversion).toString())
+    }
+}
+
+const aggregateConversion = (data) => {
+    const conversionCount = {visit: 0, contactUs: 0, gitHub: 0}
+    for (i in data) {
+        if (data[i].conversion === 'visit') {
+            conversionCount.visit = conversionCount.visit + 1
+        }
+        else if (data[i].conversion === 'contactUs') {
+            conversionCount.contactUs = conversionCount.contactUs + 1
+        }
+        else {
+            conversionCount.gitHub = conversionCount.gitHub + 1
+        }
+    }
+    console.log(conversionCount)
+}
+
+const readData = (path, method) => {
     fs.readFile(path, (err, data) => {
         if(err) throw err;
         const list = data.toString().trim().split('\n').sort()
         list.splice(list.length-1)
         const array = new Array()
         for (i in list) {
-            var items = list[i].split(',')
-            array.push({timestamp: Number(items[0]), ipAddress: items[1], conversion: items[2]})
+            var items = list[i].trim().split(',')
+            array.push({timestamp: parseInt(items[0]), ipAddress: items[1], conversion: items[2]})
         }
-        for (i in array) {
-            console.log('===' + (Number(i)+1).toString() + '===\n' 
-            + 'Timestamp: ' + String(array[i].timestamp) + '\n'
-            + 'IP Address: ' + String(array[i].ipAddress) + '\n'
-            + 'Conversion: ' + String(array[i].conversion))
+        if (method === 'DISPLAY') {
+            displayData(array)
+        }
+        else {
+            aggregateConversion(array)
         }
     }
-    ); 
-}
+    )
+}   
 
-displayData(dataSource)
+readData(dataSource, method)

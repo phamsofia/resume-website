@@ -2,7 +2,6 @@ const superagent = require('superagent');
 const dataSource = 'https://instagram.com'
 
 const writeFile = (response) => {
-    // do something
     const fs = require('fs')
     const myError = (err) => {
         if (err) throw err;

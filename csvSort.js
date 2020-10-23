@@ -24,6 +24,7 @@ const fs = require('fs')
 const dataSource = process.env.DATASOURCE
 const method = process.env.METHOD
 
+// log each data point 
 const displayData = (data) => {
     for (i in data) {
         console.log('===' + (parseInt(i)+1).toString() + '===\n' 
@@ -33,6 +34,7 @@ const displayData = (data) => {
     }
 }
 
+// to log conversion count 
 const aggregateConversion = (data) => {
     const conversionCount = {visit: 0, contactUs: 0, gitHub: 0}
     for (i in data) {
@@ -49,6 +51,7 @@ const aggregateConversion = (data) => {
     console.log(conversionCount)
 }
 
+// to read data
 const readData = (path, method) => {
     fs.readFile(path, (err, data) => {
         if(err) throw err;
